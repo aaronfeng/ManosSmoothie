@@ -8,14 +8,16 @@
     <canvas id="mycanvas" width="800" height="400"></canvas>
 
     <script type="text/javascript">
+     
       $(document).ready(function () {
-        function getData() {
-          var num = $.ajax({
-            url:      "/processes",
-            async:    false,
-          }).responseText;
 
-          return parseFloat(num);
+         function getData() {
+           var num = $.ajax({
+             url:      "/ProcessCount",
+             async:    false,
+           }).responseText;
+
+           return parseFloat(num);
         }
 
         var smoothie = new SmoothieChart();
@@ -23,13 +25,29 @@
 
         var line1 = new TimeSeries();
         
-        setInterval(function() {
-          line1.append(new Date().getTime(), getData());
-        }, 1000);
-        
         smoothie.addTimeSeries(line1, { strokeStyle:'rgb(0, 255, 0)', 
                                         fillStyle:'rgba(0, 255, 0, 0.4)', 
                                         lineWidth:3 });
+
+        if (window["WebSocket"]) {
+	  var conn = new WebSocket("ws://127.0.0.1:8080/ProcessCount");
+
+	  conn.onmessage = function(evt) {
+              var count = parseFloat (evt.data);
+              console.log ('got data:  ' + evt.data + ' is ' + count);
+              line1.append(new Date().getTime(), parseFloat(evt.data));
+          };
+
+	  conn.onclose = function(evt) {
+              console.log ('closed connection.');
+	  };
+	  
+	} else {
+             console.log ('browser does not support WebSockets, will use timeout.');
+             setInterval(function() {
+                line1.append(new Date().getTime(), getData());
+             }, 1000);
+        }
 
       });
     </script>
