@@ -8,28 +8,33 @@ using System.Text;
 using System.Diagnostics;
 
 namespace ManosSmoothie {
-  public class ManosSmoothie : ManosApp {
-    public ManosSmoothie () {
-      Route ("/Content/", new StaticContentModule());
 
-      Route ("/", ctx => {
-        ctx.Response.SendFile("Templates/index.html");
-        ctx.Response.End();
-      });
-    }
+	public class ManosSmoothie : ManosApp {
+		public ManosSmoothie () {
+			Route ("/Content/", new StaticContentModule());
 
-	  public void ProcessCount (IManosContext ctx)
-	  {
-		  WebSocket ws = WebSocket.Upgrade (ctx.Request);
+			Route ("/", ctx => {
+				ctx.Response.SendFile("Templates/index.html");
+				ctx.Response.End();
+			});
+		}
 
-		  var t = AddTimeout (TimeSpan.FromSeconds (3), RepeatBehavior.Forever, (app, data) => {
-			  var processlist = Process.GetProcesses();
-			  ws.Send (processlist.Length.ToString());
-		  });
+		public void ProcessCount (IManosContext ctx)
+		{
+			WebSocket ws = WebSocket.Upgrade (ctx.Request);
 
-		  ws.Closed += delegate {
-			  t.Stop ();
-		  };
-	  }
-  }
+			Random rand = new Random ();
+
+			var t = AddTimeout (TimeSpan.FromSeconds (0.5), RepeatBehavior.Forever, (app, data) => {
+				int r = rand.Next (10, 100);
+				ws.Send (r.ToString ());
+			});
+
+			ws.Closed += delegate {
+				t.Stop ();
+			};
+		}
+	}
 }
+
+
