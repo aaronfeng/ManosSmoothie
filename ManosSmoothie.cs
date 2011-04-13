@@ -11,9 +11,9 @@ namespace ManosSmoothie {
 
 	public class ManosSmoothie : ManosApp {
 		public ManosSmoothie () {
-			Route ("/Content/", new StaticContentModule());
+			Get ("/Content/", new StaticContentModule());
 
-			Route ("/", ctx => {
+			Get ("/", ctx => {
 				ctx.Response.SendFile("Templates/index.html");
 				ctx.Response.End();
 			});
