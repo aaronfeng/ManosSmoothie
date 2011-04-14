@@ -32,6 +32,7 @@ using System.Security.Cryptography;
 
 using Manos;
 using Manos.IO;
+using Manos.IO.Libev;
 using Manos.Http;
 
 
@@ -43,9 +44,9 @@ namespace Manos.Ws {
 		private static readonly byte [] MESSAGE_START = new byte [] { 0x00 };
 		private static readonly byte [] MESSAGE_END = new byte [] { 0xFF };
 		
-		private SocketStream socket;
+		private ISocketStream socket;
 
-		internal WebSocket (SocketStream socket)
+		internal WebSocket (ISocketStream socket)
 		{
 			this.socket = socket;
 
