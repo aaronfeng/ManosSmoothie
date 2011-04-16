@@ -19,7 +19,7 @@ namespace ManosSmoothie {
 			});
 		}
 
-		public void ProcessCount (IManosContext ctx)
+		public void RandomCount (IManosContext ctx)
 		{
 			WebSocket ws = WebSocket.Upgrade (ctx.Request);
 
